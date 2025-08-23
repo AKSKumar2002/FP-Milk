@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Score Meter - Farmpick</title>
+  <link rel="shortcut icon" href="assets/img/favicon.png" type="image/x-icon">
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/styles.css">
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    .main {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #f8fafc 0%, #e0e7ef 100%);
+    }
+    .scoremeter-section {
+      width: 100%;
+      min-height: 70vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+    }
+    .scoremeter-stack {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      width: 100%;
+      max-width: 360px;
+      margin: 0 auto;
+      background: rgba(255,255,255,0.65);
+      border-radius: 1.2rem;
+      box-shadow: 0 8px 32px rgba(34,85,63,0.18);
+      padding: 1.2rem 0.7rem;
+      position: relative;
+      backdrop-filter: blur(18px) brightness(1.1);
+      border: 1.5px solid #e0e7ef;
+      transform: rotateY(90deg);
+      opacity: 0;
+      transition: transform 1s cubic-bezier(.77,0,.18,1), opacity 0.8s cubic-bezier(.77,0,.18,1);
+    }
+    .scoremeter-stack.loaded {
+      transform: rotateY(0deg);
+      opacity: 1;
+    }
+    .circlemeter-container {
+      width: 180px;
+      height: 180px;
+      position: relative;
+      margin-bottom: 1rem;
+      margin-top: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      perspective: 800px;
+    }
+    .circlemeter-svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+      position: relative;
+      z-index: 1;
+    }
+    /* Needle */
+    .needle {
+      stroke: red;
+      stroke-width: 3;
+      transform-origin: 50% 80%;
+      transform: rotate(-90deg);
+      transition: transform 1s cubic-bezier(.77,0,.18,1);
+    }
+    .scoremeter-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 0.7rem;
+      align-items: center;
+      position: relative;
+      z-index: 10;
+      width: 200px;
+      margin-bottom: 0.5rem;
+    }
+    .scoremeter-btn {
+      background: rgba(34, 85, 63, 0.12);
+      color: hsl(152, 24%, 32%);
+      border: none;
+      border-radius: 1.2rem;
+      padding: 0.6rem 1.1rem;
+      font-size: 0.9rem;
+      font-weight: 600;
+      box-shadow: 0 2px 12px rgba(34,85,63,0.06);
+      backdrop-filter: blur(2px);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      width: 100%;
+      text-align: center;
+    }
+    .scoremeter-btn.active {
+      background: hsl(152, 24%, 32%);
+      color: #fff;
+      transform: scale(1.03);
+      box-shadow: 0 6px 24px rgba(34,85,63,0.10);
+    }
+    .scoremeter-btn#redirect-btn {
+      background: #e53935;
+      color: #fff;
+    }
+    .scoremeter-tooltip {
+      display: none;
+      background: rgba(255,255,255,0.95);
+      color: var(--first-color);
+      padding: 0.4rem 0.7rem;
+      border-radius: 0.9rem 0.9rem 1.5rem 1.5rem/0.9rem 0.9rem 1.5rem 1.5rem;
+      font-size: 0.8rem;
+      white-space: pre-line;
+      box-shadow: 0 2px 12px rgba(34,85,63,0.10);
+      border: 1.5px solid hsl(152, 24%, 32%);
+      margin-top: 0.2rem;
+    }
+    .scoremeter-btn.active .scoremeter-tooltip {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <main class="main">
+    <section class="scoremeter-section container">
+      <div style="width:100%;display:flex;justify-content:center;align-items:center;">
+        <div class="scoremeter-stack" id="scoremeter-stack" style="margin-top:6.5rem; margin-bottom:4.5rem;">
+          <div class="circlemeter-container">
+            <svg class="circlemeter-svg" viewBox="0 0 180 100">
+              <path d="M20,80 A70,70 0 0,1 160,80" stroke="#eee" stroke-width="16" fill="none"/>
+              <path id="circlemeter-arc"
+                d="M20,80 A70,70 0 0,1 160,80"
+                stroke="#4caf50"
+                stroke-width="16"
+                fill="none"
+                stroke-linecap="round"
+                style="transition: stroke-dashoffset 1s, stroke 0.5s;"/>
+              <!-- Needle -->
+              <line id="needle" class="needle" x1="90" y1="80" x2="90" y2="20"/>
+              <circle cx="90" cy="80" r="4" fill="black"/>
+              <text id="circlemeter-percent-text" x="90" y="95" text-anchor="middle" font-size="1.2rem" font-family="Poppins, sans-serif" fill="#333" font-weight="bold">100%</text>
+            </svg>
+          </div>
+          <div class="scoremeter-buttons">
+            <button class="scoremeter-btn active" data-score="100">
+              Pure Milk
+              <div class="scoremeter-tooltip">Pure milk is fresh and unadulterated, retaining all its natural nutrients.</div>
+            </button>
+            <button class="scoremeter-btn" data-score="80">
+              Added Water
+              <div class="scoremeter-tooltip">Water added to milk reduces its purity and nutritional value.</div>
+            </button>
+            <button class="scoremeter-btn" data-score="50">
+              Added Preservatives
+              <div class="scoremeter-tooltip">Preservatives extend shelf life but may affect health and taste.</div>
+            </button>
+            <button class="scoremeter-btn" data-score="30">
+              Packaged Milk
+              <div class="scoremeter-tooltip">Packaged milk is often processed and may lose natural nutrients.</div>
+            </button>
+            <button class="scoremeter-btn" data-score="20">
+              Processed Milk
+              <div class="scoremeter-tooltip">Processing can remove beneficial enzymes and alter milk quality.</div>
+            </button>
+            <!-- ✅ Red Fix Page Button -->
+            <button class="scoremeter-btn" id="redirect-btn">
+              Farmpick
+              <div class="scoremeter-tooltip">Go to fix page for more details.</div>
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <a href="#" class="scrollup" id="scroll-up"> 
+    <i class="ri-arrow-up-fill scrollup__icon"></i>
+  </a>
+
+  <script src="assets/js/scrollreveal.min.js"></script>
+  <script src="assets/js/main.js"></script>
+  <script>
+    const circleArc = document.getElementById('circlemeter-arc');
+    const circlePercentText = document.getElementById('circlemeter-percent-text');
+    const buttons = document.querySelectorAll('.scoremeter-btn[data-score]');
+    const stack = document.getElementById('scoremeter-stack');
+    const needle = document.getElementById('needle');
+    const maxScore = 100;
+    const arcLength = 220;
+
+    function getMeterColor(score) {
+      if (score >= 100) return "#4caf50";
+      if (score >= 80) return "#ffeb3b";
+      if (score >= 50) return "#ff9800";
+      return "#f44336";
+    }
+
+    function updateCircleMeter(score) {
+      circlePercentText.textContent = score + "%";
+      circleArc.setAttribute('stroke', getMeterColor(score));
+      circleArc.style.strokeDasharray = arcLength;
+      circleArc.style.strokeDashoffset = arcLength * (1 - score / maxScore);
+
+      // Needle rotation (-90° to +90°)
+      let angle = -90 + (score / maxScore) * 180;
+      needle.style.transform = `rotate(${angle}deg)`;
+    }
+
+    circleArc.style.strokeDasharray = arcLength;
+    circleArc.style.strokeDashoffset = 0;
+
+    window.addEventListener('DOMContentLoaded', () => {
+      setTimeout(() => {
+        stack.classList.add('loaded');
+        setTimeout(() => {
+          buttons.forEach(b => b.classList.remove('active'));
+          buttons[0].classList.add('active');
+          updateCircleMeter(100);
+        }, 400);
+      }, 200);
+    });
+
+    buttons.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        buttons.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        setTimeout(() => {
+          updateCircleMeter(parseInt(btn.getAttribute('data-score'), 10));
+        }, 100);
+      });
+    });
+
+    // ✅ Redirect button
+    const redirectBtn = document.getElementById('redirect-btn');
+    redirectBtn.addEventListener('click', () => {
+      window.location.href = "top.html"; // change target page if needed
+    });
+  </script>
+</body>
+</html>
