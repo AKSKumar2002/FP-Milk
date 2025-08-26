@@ -118,6 +118,7 @@ body.dark-theme{
   --text-color: hsl(var(--hue), 4%, 75%);
   --body-color: hsl(var(--hue), 8%, 12%);
   --container-color: hsl(var(--hue), 8%, 16%);
+  background: linear-gradient(135deg, #181c1f 0%, #23272b 40%, #1a2332 70%, #283347 100%);
 }
 
 /*========== Button Dark/Light ==========*/
@@ -139,8 +140,11 @@ the website, in dark theme
 ==========*/
 
 .dark-theme .steps__bg,
-.dark-theme .questions{
-  background-color: var(--first-color-dark);
+.dark-theme .questions,
+.dark-theme .about,
+.dark-theme .contact,
+.dark-theme .footer {
+  background: transparent;
 }
 
 .dark-theme .product__circle,

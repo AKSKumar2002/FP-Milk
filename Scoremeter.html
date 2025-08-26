@@ -13,6 +13,7 @@
       margin: 0;
       padding: 0;
       box-sizing: border-box;
+      overflow: hidden; /* 🚫 prevent extra scroll */
     }
     body {
       min-height: 100vh;
@@ -28,7 +29,7 @@
     }
     .scoremeter-section {
       width: 100%;
-      min-height: 70vh;
+      height: 100%; /* full screen */
       display: flex;
       align-items: center;
       justify-content: center;
@@ -45,7 +46,7 @@
       background: rgba(255,255,255,0.65);
       border-radius: 1.2rem;
       box-shadow: 0 8px 32px rgba(34,85,63,0.18);
-      padding: 1.2rem 0.7rem;
+      padding: 1.2rem 0.7rem 2.5rem; /* ⬆️ more bottom padding */
       position: relative;
       backdrop-filter: blur(18px) brightness(1.1);
       border: 1.5px solid #e0e7ef;
@@ -58,26 +59,22 @@
       opacity: 1;
     }
     .circlemeter-container {
-      width: 180px;
-      height: 180px;
+      width: 200px;
+      height: 200px;
       position: relative;
-      margin-bottom: 1rem;
-      margin-top: 1rem;
+      margin: 1rem 0 2rem; /* ⬆️ added more gap below the meter */
       display: flex;
       align-items: center;
       justify-content: center;
-      perspective: 800px;
     }
     .circlemeter-svg {
       width: 100%;
       height: 100%;
       display: block;
-      position: relative;
-      z-index: 1;
     }
     /* Needle */
     .needle {
-      stroke: red;
+      stroke: black; /* ✅ black needle */
       stroke-width: 3;
       transform-origin: 50% 80%;
       transform: rotate(-90deg);
@@ -88,10 +85,8 @@
       flex-direction: column;
       gap: 0.7rem;
       align-items: center;
-      position: relative;
-      z-index: 10;
       width: 200px;
-      margin-bottom: 0.5rem;
+      margin-bottom: 1.5rem; /* ⬆️ lifted buttons up */
     }
     .scoremeter-btn {
       background: rgba(34, 85, 63, 0.12);
@@ -114,86 +109,78 @@
       transform: scale(1.03);
       box-shadow: 0 6px 24px rgba(34,85,63,0.10);
     }
-    .scoremeter-btn#redirect-btn {
+
+    /* ✅ iPhone-style slider button */
+    .slider-container {
+      position: relative;
+      width: 200px;
+      height: 50px;
       background: #e53935;
-      color: #fff;
+      border-radius: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      cursor: pointer;
+      user-select: none;
     }
-    .scoremeter-tooltip {
-      display: none;
-      background: rgba(255,255,255,0.95);
-      color: var(--first-color);
-      padding: 0.4rem 0.7rem;
-      border-radius: 0.9rem 0.9rem 1.5rem 1.5rem/0.9rem 0.9rem 1.5rem 1.5rem;
-      font-size: 0.8rem;
-      white-space: pre-line;
-      box-shadow: 0 2px 12px rgba(34,85,63,0.10);
-      border: 1.5px solid hsl(152, 24%, 32%);
-      margin-top: 0.2rem;
+    .slider-text {
+      position: absolute;
+      color: white;
+      font-weight: 600;
+      pointer-events: none;
     }
-    .scoremeter-btn.active .scoremeter-tooltip {
-      display: block;
+    .slider-knob {
+      width: 50px;
+      height: 50px;
+      background: white;
+      border-radius: 50%;
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      margin: auto;
+      transition: left 0.3s;
     }
   </style>
 </head>
 <body>
   <main class="main">
     <section class="scoremeter-section container">
-      <div style="width:100%;display:flex;justify-content:center;align-items:center;">
-        <div class="scoremeter-stack" id="scoremeter-stack" style="margin-top:6.5rem; margin-bottom:4.5rem;">
-          <div class="circlemeter-container">
-            <svg class="circlemeter-svg" viewBox="0 0 180 100">
-              <path d="M20,80 A70,70 0 0,1 160,80" stroke="#eee" stroke-width="16" fill="none"/>
-              <path id="circlemeter-arc"
-                d="M20,80 A70,70 0 0,1 160,80"
-                stroke="#4caf50"
-                stroke-width="16"
-                fill="none"
-                stroke-linecap="round"
-                style="transition: stroke-dashoffset 1s, stroke 0.5s;"/>
-              <!-- Needle -->
-              <line id="needle" class="needle" x1="90" y1="80" x2="90" y2="20"/>
-              <circle cx="90" cy="80" r="4" fill="black"/>
-              <text id="circlemeter-percent-text" x="90" y="95" text-anchor="middle" font-size="1.2rem" font-family="Poppins, sans-serif" fill="#333" font-weight="bold">100%</text>
-            </svg>
-          </div>
-          <div class="scoremeter-buttons">
-            <button class="scoremeter-btn active" data-score="100">
-              Pure Milk
-              <div class="scoremeter-tooltip">Pure milk is fresh and unadulterated, retaining all its natural nutrients.</div>
-            </button>
-            <button class="scoremeter-btn" data-score="80">
-              Added Water
-              <div class="scoremeter-tooltip">Water added to milk reduces its purity and nutritional value.</div>
-            </button>
-            <button class="scoremeter-btn" data-score="50">
-              Added Preservatives
-              <div class="scoremeter-tooltip">Preservatives extend shelf life but may affect health and taste.</div>
-            </button>
-            <button class="scoremeter-btn" data-score="30">
-              Packaged Milk
-              <div class="scoremeter-tooltip">Packaged milk is often processed and may lose natural nutrients.</div>
-            </button>
-            <button class="scoremeter-btn" data-score="20">
-              Processed Milk
-              <div class="scoremeter-tooltip">Processing can remove beneficial enzymes and alter milk quality.</div>
-            </button>
-            <!-- ✅ Red Fix Page Button -->
-            <button class="scoremeter-btn" id="redirect-btn">
-              Farmpick
-              <div class="scoremeter-tooltip">Go to fix page for more details.</div>
-            </button>
-          </div>
+      <div class="scoremeter-stack" id="scoremeter-stack">
+        <div class="circlemeter-container">
+          <svg class="circlemeter-svg" viewBox="0 0 180 100">
+            <path d="M20,80 A70,70 0 0,1 160,80" stroke="#eee" stroke-width="16" fill="none"/>
+            <path id="circlemeter-arc"
+              d="M20,80 A70,70 0 0,1 160,80"
+              stroke="#4caf50"
+              stroke-width="16"
+              fill="none"
+              stroke-linecap="round"
+              style="transition: stroke-dashoffset 1s, stroke 0.5s;"/>
+            <line id="needle" class="needle" x1="90" y1="80" x2="90" y2="20"/>
+            <circle cx="90" cy="80" r="4" fill="black"/>
+            <!-- ⬆️ percentage moved above the needle -->
+            <text id="circlemeter-percent-text" x="90" y="40" text-anchor="middle" font-size="1.2rem" font-family="Poppins, sans-serif" fill="#333" font-weight="bold">100%</text>
+          </svg>
+        </div>
+        <div class="scoremeter-buttons">
+          <button class="scoremeter-btn active" data-score="100">Pure Milk</button>
+          <button class="scoremeter-btn" data-score="80">Added Water</button>
+          <button class="scoremeter-btn" data-score="50">Added Preservatives</button>
+          <button class="scoremeter-btn" data-score="30">Packaged Milk</button>
+          <button class="scoremeter-btn" data-score="20">Processed Milk</button>
+        </div>
+
+        <!-- ✅ Slider instead of button -->
+        <div class="slider-container" id="slider">
+          <div class="slider-text">››› Slide to Fix Page</div>
+          <div class="slider-knob" id="slider-knob"></div>
         </div>
       </div>
     </section>
   </main>
 
-  <a href="#" class="scrollup" id="scroll-up"> 
-    <i class="ri-arrow-up-fill scrollup__icon"></i>
-  </a>
-
-  <script src="assets/js/scrollreveal.min.js"></script>
-  <script src="assets/js/main.js"></script>
   <script>
     const circleArc = document.getElementById('circlemeter-arc');
     const circlePercentText = document.getElementById('circlemeter-percent-text');
@@ -207,7 +194,7 @@
       if (score >= 100) return "#4caf50";
       if (score >= 80) return "#ffeb3b";
       if (score >= 50) return "#ff9800";
-      return "#f44336";
+      return "#000000"; // ✅ black instead of red
     }
 
     function updateCircleMeter(score) {
@@ -215,8 +202,6 @@
       circleArc.setAttribute('stroke', getMeterColor(score));
       circleArc.style.strokeDasharray = arcLength;
       circleArc.style.strokeDashoffset = arcLength * (1 - score / maxScore);
-
-      // Needle rotation (-90° to +90°)
       let angle = -90 + (score / maxScore) * 180;
       needle.style.transform = `rotate(${angle}deg)`;
     }
@@ -245,10 +230,30 @@
       });
     });
 
-    // ✅ Redirect button
-    const redirectBtn = document.getElementById('redirect-btn');
-    redirectBtn.addEventListener('click', () => {
-      window.location.href = "top.html"; // change target page if needed
+    // ✅ Slider logic
+    const slider = document.getElementById("slider");
+    const knob = document.getElementById("slider-knob");
+    let isDragging = false;
+
+    knob.addEventListener("mousedown", () => isDragging = true);
+    document.addEventListener("mouseup", () => {
+      if (isDragging) {
+        if (knob.offsetLeft > slider.offsetWidth * 0.7) {
+          window.location.href = "top.html"; // ✅ redirect
+        } else {
+          knob.style.left = "0px"; // reset if not far enough
+        }
+      }
+      isDragging = false;
+    });
+
+    document.addEventListener("mousemove", (e) => {
+      if (isDragging) {
+        const rect = slider.getBoundingClientRect();
+        let pos = e.clientX - rect.left - knob.offsetWidth/2;
+        pos = Math.max(0, Math.min(pos, rect.width - knob.offsetWidth));
+        knob.style.left = pos + "px";
+      }
     });
   </script>
 </body>
