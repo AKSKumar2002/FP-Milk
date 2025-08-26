@@ -20,6 +20,7 @@
         .home-banners {
             position: relative;
             height: 100vh;
+            min-height: 400px;
             overflow: hidden;
             perspective: 1200px;
             display: flex;
@@ -97,13 +98,20 @@
             max-width: 500px;
         }
         @media (max-width: 900px) {
+            .home-banners {
+                height: 100svh;
+                min-height: 400px;
+            }
             .home__container {
                 flex-direction: column;
                 gap: 1.5rem;
                 min-height: 60vh;
+                justify-content: center;
+                align-items: center;
             }
             .home__img {
                 max-width: 220px;
+                margin-bottom: 1.2rem;
             }
             #home2 .home__title {
                 font-size: 2rem;
@@ -114,15 +122,36 @@
             }
         }
         @media (max-width: 600px) {
+            .home-banners {
+                height: 100svh;
+                min-height: 400px;
+            }
             .home__container {
                 padding: 1rem;
                 gap: 1rem;
+                min-height: 60vh;
+                justify-content: center;
+                align-items: center;
+            }
+            .home__img {
+                max-width: 160px;
+                margin-bottom: 1rem;
+            }
+            .home__data {
+                width: 100%;
+                align-items: center;
+                text-align: center;
             }
             #home2 .home__title {
-                font-size: 1.3rem;
+                font-size: 1.1rem;
+                margin-bottom: 0.7rem;
             }
             #home2 .home__subtitle {
-                font-size: 1rem;
+                font-size: 0.95rem;
+                margin-bottom: 1.2rem;
+            }
+            .home__data a.button {
+                margin-bottom: 0.8rem;
             }
         }
         /* ...existing code... */
@@ -279,7 +308,7 @@
                     </div>
 
                     <a href="https://farmpickshope.vercel.app/" class="button--link button--flex">
-                        Shop Now <i class="ri-arrow-right-down-line button__icon"></i>
+                        Shop Now <i class="ri-arrow-right-up-line button__icon"></i>
                     </a>
                 </div>
             </div>
