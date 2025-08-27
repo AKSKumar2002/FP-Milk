@@ -1066,30 +1066,3 @@ the website, in dark theme
     right: 3rem;
   }
 }
-
-/* Mobile fix */
-@media (max-width: 768px) {
-  #home2 {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh; /* makes sure banner covers full screen */
-    padding: 2rem 1rem;
-    text-align: center;
-  }
-
-  #home2 .home_data {
-    flex: none;
-    max-width: 100%;
-    align-items: center !important;
-    text-align: center !important;
-  }
-
-  #home2 .home_img {
-    width: 80%;
-    max-width: 300px;
-    margin: 1.5rem auto 0;
-    display: block;
-  }
-}
