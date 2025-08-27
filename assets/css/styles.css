@@ -304,7 +304,7 @@ the website, in dark theme
 
 /*=============== HOME ===============*/
 .home{
-  padding: 3.5rem 0 2rem;
+  padding: 2rem 0 2rem; /* Reduce top padding to lift the banner */
 }
 
 .home__container{
