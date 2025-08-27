@@ -353,8 +353,8 @@
       // Show blur effect while popup is visible
       mainContent.classList.add('blurred');
 
-      // Hide popup after 3 seconds or when clicking outside
-      setTimeout(hidePopup, 3000); // Popup stays for 3 seconds
+      // Hide popup after 10 seconds or when clicking outside
+      setTimeout(hidePopup, 10000); // Popup stays for 10 seconds
       document.addEventListener('click', hidePopup, { once: true });
     });
 
