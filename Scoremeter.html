@@ -184,10 +184,59 @@
         font-size: 1.3rem;
       }
     }
+
+    /* Popup cloud styling */
+    .popup-cloud {
+      position: fixed;
+      top: -100px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #ffffff;
+      border-radius: 2rem;
+      padding: 1.5rem 2rem;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+      font-size: 1.2rem;
+      font-weight: bold;
+      color: #2e5532;
+      text-align: center;
+      animation: slideDown 0.8s ease forwards, fadeOut 0.8s ease 3.2s forwards;
+      z-index: 1000;
+    }
+
+    @keyframes slideDown {
+      from {
+        top: -100px;
+        opacity: 0;
+      }
+      to {
+        top: 20%;
+        opacity: 1;
+      }
+    }
+
+    @keyframes fadeOut {
+      from {
+        opacity: 1;
+      }
+      to {
+        opacity: 0;
+      }
+    }
+
+    .popup-cloud.hidden {
+      display: none;
+    }
+
+    /* Blur effect for the background */
+    .blurred {
+      filter: blur(5px);
+      pointer-events: none; /* Prevent interaction with blurred content */
+    }
   </style>
 </head>
 <body>
-  <main class="main">
+  <div class="popup-cloud" id="popup-cloud">How pure is your daily milk ?</div>
+  <main class="main" id="main-content">
     <section class="scoremeter-section container">
       <div class="scoremeter-stack" id="scoremeter-stack">
         <div class="circlemeter-container">
@@ -245,6 +294,8 @@
     const buttons = document.querySelectorAll('.scoremeter-btn[data-score]');
     const stack = document.getElementById('scoremeter-stack');
     const needle = document.getElementById('needle');
+    const popupCloud = document.getElementById('popup-cloud');
+    const mainContent = document.getElementById('main-content');
     const maxScore = 100;
     const arcLength = 220;
 
@@ -266,13 +317,6 @@
       needle.style.transform = `rotate(${angle}deg)`;
     }
 
-    function updateButtonColor(btn, score) {
-      const color = getMeterColor(score);
-      btn.style.background = color;
-      btn.style.color = score >= 50 ? '#fff' : '#000';
-      btn.style.borderColor = color;
-    }
-
     function resetButtonColors() {
       buttons.forEach((btn) => {
         btn.style.background = '#f9fff9';
@@ -281,18 +325,37 @@
       });
     }
 
+    function animateMeter() {
+      let currentScore = 0;
+      const interval = setInterval(() => {
+        updateCircleMeter(currentScore);
+        currentScore += 2; // Increment score by 2
+        if (currentScore > maxScore) {
+          clearInterval(interval);
+        }
+      }, 30); // Update every 30ms
+    }
+
+    function hidePopup() {
+      popupCloud.classList.add('hidden');
+      mainContent.classList.remove('blurred'); // Remove blur effect
+    }
+
     circleArc.style.strokeDasharray = arcLength;
-    circleArc.style.strokeDashoffset = 0;
+    circleArc.style.strokeDashoffset = arcLength;
 
     window.addEventListener('DOMContentLoaded', () => {
       setTimeout(() => {
         stack.classList.add('loaded');
-        setTimeout(() => {
-          buttons.forEach(b => b.classList.remove('active'));
-          buttons[0].classList.add('active');
-          updateCircleMeter(100);
-        }, 400);
+        animateMeter(); // Animate the meter on page load
       }, 200);
+
+      // Show blur effect while popup is visible
+      mainContent.classList.add('blurred');
+
+      // Hide popup after 3 seconds or when clicking outside
+      setTimeout(hidePopup, 3000); // Popup stays for 3 seconds
+      document.addEventListener('click', hidePopup, { once: true });
     });
 
     buttons.forEach((btn) => {
@@ -302,7 +365,9 @@
         btn.classList.add('active');
         const score = parseInt(btn.getAttribute('data-score'), 10);
         updateCircleMeter(score);
-        updateButtonColor(btn, score); // Update clicked button color
+        btn.style.background = getMeterColor(score); // Update clicked button color
+        btn.style.color = score >= 50 ? '#fff' : '#000';
+        btn.style.borderColor = getMeterColor(score);
       });
     });
 
@@ -312,7 +377,9 @@
       updateCircleMeter(100);
       buttons.forEach(b => b.classList.remove('active'));
       redirectBtn.classList.add('active');
-      updateButtonColor(redirectBtn, 100); // Update Farmpick button color
+      redirectBtn.style.background = getMeterColor(100); // Update Farmpick button color
+      redirectBtn.style.color = '#fff';
+      redirectBtn.style.borderColor = getMeterColor(100);
       setTimeout(() => {
         window.location.href = "top.html"; // change target page if needed
       }, 500);
