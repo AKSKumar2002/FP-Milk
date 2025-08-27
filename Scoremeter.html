@@ -36,11 +36,12 @@
       max-width: 380px;
       margin: 0 auto;
       padding: 1.8rem 1.2rem;
-      background: #ffffffcc;
+      background: url('./assets/img/MS1.jpg') no-repeat center center;
+      background-size: cover;
       border-radius: 1.5rem;
       box-shadow: 0 10px 25px rgba(0,0,0,0.12);
       backdrop-filter: blur(12px);
-      border: 2px solid #d0e5d5;
+      border: 2px solid rgba(208, 229, 213, 0.8); /* Slight transparency for better blending */
       animation: fadeIn 1s ease;
     }
 
@@ -117,6 +118,39 @@
       box-shadow: 0 5px 15px rgba(46,125,50,0.3);
     }
 
+    /* Additional styles for Farmpick button */
+    .scoremeter-btn#redirect-btn {
+      background: linear-gradient(135deg, #a8e063, #56ab2f);
+      color: #fff;
+      border: 2px solid #56ab2f;
+      font-weight: bold;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .scoremeter-btn#redirect-btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: url('https://www.transparenttextures.com/patterns/white-wave.png');
+      opacity: 0.3;
+      z-index: 0;
+    }
+
+    .scoremeter-btn#redirect-btn:hover {
+      background: linear-gradient(135deg, #56ab2f, #a8e063);
+      transform: scale(1.05);
+    }
+
+    .scoremeter-btn#redirect-btn .scoremeter-tooltip {
+      background: #56ab2f;
+      color: #fff;
+      border-color: #56ab2f;
+    }
+
     /* ================== TOOLTIPS ================== */
     .scoremeter-tooltip {
       display: none;
@@ -140,6 +174,7 @@
       .scoremeter-stack {
         max-width: 90%;
         padding: 1.5rem 1rem;
+        background-position: top center; /* Adjust position for smaller screens */
       }
       .circlemeter-container {
         width: 170px;
@@ -231,6 +266,21 @@
       needle.style.transform = `rotate(${angle}deg)`;
     }
 
+    function updateButtonColor(btn, score) {
+      const color = getMeterColor(score);
+      btn.style.background = color;
+      btn.style.color = score >= 50 ? '#fff' : '#000';
+      btn.style.borderColor = color;
+    }
+
+    function resetButtonColors() {
+      buttons.forEach((btn) => {
+        btn.style.background = '#f9fff9';
+        btn.style.color = '#2e5532';
+        btn.style.borderColor = '#cce3cc';
+      });
+    }
+
     circleArc.style.strokeDasharray = arcLength;
     circleArc.style.strokeDashoffset = 0;
 
@@ -248,16 +298,24 @@
     buttons.forEach((btn) => {
       btn.addEventListener('click', () => {
         buttons.forEach(b => b.classList.remove('active'));
+        resetButtonColors(); // Reset all button colors
         btn.classList.add('active');
-        setTimeout(() => {
-          updateCircleMeter(parseInt(btn.getAttribute('data-score'), 10));
-        }, 100);
+        const score = parseInt(btn.getAttribute('data-score'), 10);
+        updateCircleMeter(score);
+        updateButtonColor(btn, score); // Update clicked button color
       });
     });
 
     const redirectBtn = document.getElementById('redirect-btn');
     redirectBtn.addEventListener('click', () => {
-      window.location.href = "top.html"; // change target page if needed
+      resetButtonColors(); // Reset all button colors
+      updateCircleMeter(100);
+      buttons.forEach(b => b.classList.remove('active'));
+      redirectBtn.classList.add('active');
+      updateButtonColor(redirectBtn, 100); // Update Farmpick button color
+      setTimeout(() => {
+        window.location.href = "top.html"; // change target page if needed
+      }, 500);
     });
   </script>
 </body>
