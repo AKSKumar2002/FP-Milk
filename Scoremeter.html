@@ -254,35 +254,40 @@
             <circle cx="90" cy="80" r="4" fill="#2e5532"/>
           </svg>
           <!-- Percentage text (moved outside SVG for proper centering) -->
-          <div id="circlemeter-percent-text">100%</div>
+          <div id="circlemeter-percent-text">20%</div>
         </div>
 
         <div class="scoremeter-buttons">
-          <button class="scoremeter-btn active" data-score="100">
-            Pure Milk
-            <div class="scoremeter-tooltip">Pure milk is fresh and unadulterated, retaining all its natural nutrients.</div>
-          </button>
-          <button class="scoremeter-btn" data-score="80">
-            Added Water
-            <div class="scoremeter-tooltip">Water added to milk reduces its purity and nutritional value.</div>
-          </button>
-          <button class="scoremeter-btn" data-score="50">
-            Added Preservatives
-            <div class="scoremeter-tooltip">Preservatives extend shelf life but may affect health and taste.</div>
-          </button>
-          <button class="scoremeter-btn" data-score="30">
-            Packaged Milk
-            <div class="scoremeter-tooltip">Packaged milk is often processed and may lose natural nutrients.</div>
-          </button>
-          <button class="scoremeter-btn" data-score="20">
-            Processed Milk
-            <div class="scoremeter-tooltip">Processing can remove beneficial enzymes and alter milk quality.</div>
-          </button>
-          <!-- Fix Page Button -->
-          <button class="scoremeter-btn" id="redirect-btn">
-            Farmpick
-            <div class="scoremeter-tooltip">Visit us for more details.</div>
-          </button>
+  <button class="scoremeter-btn active" data-score="20">
+    What is Processed Milk?
+    <div class="scoremeter-tooltip">Processed milk undergoes treatment that may reduce some natural enzymes and nutrients.</div>
+  </button>
+  
+  <button class="scoremeter-btn" data-score="40">
+    What is Packaged Milk?
+    <div class="scoremeter-tooltip">Packaged milk is often pasteurized and homogenized, which can affect its natural composition.</div>
+  </button>
+  
+  <button class="scoremeter-btn" data-score="60">
+    Adding Preservatives
+    <div class="scoremeter-tooltip">Preservatives help extend shelf life but may impact the milk’s natural taste and health benefits.</div>
+  </button>
+  
+  <button class="scoremeter-btn" data-score="80">
+    Adding Water to Milk
+    <div class="scoremeter-tooltip">Diluting milk with water lowers its nutritional value and compromises its purity.</div>
+  </button>
+  
+  <button class="scoremeter-btn" data-score="100">
+    Pure Milk – The Gold Standard!
+    <div class="scoremeter-tooltip">Pure milk is fresh, natural, and unadulterated—rich in original nutrients and taste.</div>
+  </button>
+  
+  <!-- Fix Page Button -->
+  <button class="scoremeter-btn" id="redirect-btn">
+    Discover Farmpick Milk
+    <div class="scoremeter-tooltip">Learn more about our commitment to delivering 100% pure and fresh milk.</div>
+  </button>
         </div>
       </div>
     </section>
@@ -325,15 +330,24 @@
       });
     }
 
-    function animateMeter() {
-      let currentScore = 0;
+    // Animate from startScore to endScore
+    function animateMeterTo(startScore, endScore, cb) {
+      // Clamp endScore between 0 and 100
+      endScore = Math.max(0, Math.min(100, endScore));
+      let currentScore = startScore;
+      const step = startScore < endScore ? 2 : -2;
       const interval = setInterval(() => {
-        updateCircleMeter(currentScore);
-        currentScore += 2;
-        if (currentScore > maxScore) {
+        if ((step > 0 && currentScore >= endScore) || (step < 0 && currentScore <= endScore)) {
+          updateCircleMeter(endScore);
           clearInterval(interval);
+          if (cb) cb();
+        } else {
+          currentScore += step;
+          // Clamp currentScore to [0,100] to avoid runaway
+          currentScore = Math.max(0, Math.min(100, currentScore));
+          updateCircleMeter(currentScore);
         }
-      }, 30);
+      }, 20);
     }
 
     function hidePopup() {
@@ -347,7 +361,8 @@
     window.addEventListener('DOMContentLoaded', () => {
       setTimeout(() => {
         stack.classList.add('loaded');
-        animateMeter();
+        // Animate from 100% to 20% on load
+        animateMeterTo(100, 20);
       }, 200);
 
       mainContent.classList.add('blurred');
@@ -355,14 +370,20 @@
       document.addEventListener('click', hidePopup, { once: true });
     });
 
-    // Show tooltip for 5 seconds, then redirect
+    // Show tooltip for 4 seconds, then redirect
     buttons.forEach((btn) => {
       btn.addEventListener('click', () => {
         buttons.forEach(b => b.classList.remove('active'));
         resetButtonColors();
         btn.classList.add('active');
-        const score = parseInt(btn.getAttribute('data-score'), 10);
-        updateCircleMeter(score);
+        // Always clamp score to 100 max
+        let score = parseInt(btn.getAttribute('data-score'), 10);
+        if (score > 100) score = 100;
+
+        // Animate from current meter value to new score
+        let currentScore = parseInt(circlePercentText.textContent, 10);
+        animateMeterTo(currentScore, score);
+
         btn.style.background = getMeterColor(score);
         btn.style.color = score >= 50 ? '#fff' : '#000';
         btn.style.borderColor = getMeterColor(score);
@@ -376,7 +397,7 @@
           setTimeout(() => {
             tooltip.style.display = 'none';
             window.location.href = "top.html";
-          }, 4000);
+          }, 20000);
         }
       });
     });
@@ -384,7 +405,10 @@
     const redirectBtn = document.getElementById('redirect-btn');
     redirectBtn.addEventListener('click', () => {
       resetButtonColors();
-      updateCircleMeter(100);
+      // Animate from current meter value to 100
+      let currentScore = parseInt(circlePercentText.textContent, 10);
+      animateMeterTo(currentScore, 100);
+
       buttons.forEach(b => b.classList.remove('active'));
       redirectBtn.classList.add('active');
       redirectBtn.style.background = getMeterColor(100);
@@ -400,7 +424,7 @@
         setTimeout(() => {
           tooltip.style.display = 'none';
           window.location.href = "top.html";
-        }, 5000);
+        }, 20000);
       }
     });
   </script>
