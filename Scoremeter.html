@@ -329,16 +329,16 @@
       let currentScore = 0;
       const interval = setInterval(() => {
         updateCircleMeter(currentScore);
-        currentScore += 2; // Increment score by 2
+        currentScore += 2;
         if (currentScore > maxScore) {
           clearInterval(interval);
         }
-      }, 30); // Update every 30ms
+      }, 30);
     }
 
     function hidePopup() {
       popupCloud.classList.add('hidden');
-      mainContent.classList.remove('blurred'); // Remove blur effect
+      mainContent.classList.remove('blurred');
     }
 
     circleArc.style.strokeDasharray = arcLength;
@@ -347,42 +347,61 @@
     window.addEventListener('DOMContentLoaded', () => {
       setTimeout(() => {
         stack.classList.add('loaded');
-        animateMeter(); // Animate the meter on page load
+        animateMeter();
       }, 200);
 
-      // Show blur effect while popup is visible
       mainContent.classList.add('blurred');
-
-      // Hide popup after 4 seconds or when clicking outside
-      setTimeout(hidePopup, 4000); // Popup stays for 10 seconds
+      setTimeout(hidePopup, 4000);
       document.addEventListener('click', hidePopup, { once: true });
     });
 
+    // Show tooltip for 5 seconds, then redirect
     buttons.forEach((btn) => {
       btn.addEventListener('click', () => {
         buttons.forEach(b => b.classList.remove('active'));
-        resetButtonColors(); // Reset all button colors
+        resetButtonColors();
         btn.classList.add('active');
         const score = parseInt(btn.getAttribute('data-score'), 10);
         updateCircleMeter(score);
-        btn.style.background = getMeterColor(score); // Update clicked button color
+        btn.style.background = getMeterColor(score);
         btn.style.color = score >= 50 ? '#fff' : '#000';
         btn.style.borderColor = getMeterColor(score);
+
+        // Hide all tooltips first
+        document.querySelectorAll('.scoremeter-tooltip').forEach(tip => tip.style.display = 'none');
+        // Show only this tooltip
+        const tooltip = btn.querySelector('.scoremeter-tooltip');
+        if (tooltip) {
+          tooltip.style.display = 'block';
+          setTimeout(() => {
+            tooltip.style.display = 'none';
+            window.location.href = "top.html";
+          }, 4000);
+        }
       });
     });
 
     const redirectBtn = document.getElementById('redirect-btn');
     redirectBtn.addEventListener('click', () => {
-      resetButtonColors(); // Reset all button colors
+      resetButtonColors();
       updateCircleMeter(100);
       buttons.forEach(b => b.classList.remove('active'));
       redirectBtn.classList.add('active');
-      redirectBtn.style.background = getMeterColor(100); // Update Farmpick button color
+      redirectBtn.style.background = getMeterColor(100);
       redirectBtn.style.color = '#fff';
       redirectBtn.style.borderColor = getMeterColor(100);
-      setTimeout(() => {
-        window.location.href = "top.html"; // change target page if needed
-      }, 500);
+
+      // Hide all tooltips first
+      document.querySelectorAll('.scoremeter-tooltip').forEach(tip => tip.style.display = 'none');
+      // Show only this tooltip
+      const tooltip = redirectBtn.querySelector('.scoremeter-tooltip');
+      if (tooltip) {
+        tooltip.style.display = 'block';
+        setTimeout(() => {
+          tooltip.style.display = 'none';
+          window.location.href = "top.html";
+        }, 5000);
+      }
     });
   </script>
 </body>
