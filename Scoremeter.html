@@ -320,6 +320,15 @@
       // Needle rotation (-90° to +90°)
       let angle = -90 + (score / maxScore) * 180;
       needle.style.transform = `rotate(${angle}deg)`;
+
+      // Update active button color to match meter color
+      buttons.forEach(btn => {
+        if (btn.classList.contains('active')) {
+          btn.style.background = getMeterColor(score);
+          btn.style.color = score >= 50 ? '#fff' : '#000';
+          btn.style.borderColor = getMeterColor(score);
+        }
+      });
     }
 
     function resetButtonColors() {
@@ -362,7 +371,15 @@
       setTimeout(() => {
         stack.classList.add('loaded');
         // Animate from 100% to 20% on load
-        animateMeterTo(100, 20);
+        animateMeterTo(100, 20, () => {
+          // Set initial button color for "Processed Milk"
+          const initialBtn = document.querySelector('.scoremeter-btn.active');
+          if (initialBtn) {
+            initialBtn.style.background = getMeterColor(20);
+            initialBtn.style.color = 20 >= 50 ? '#fff' : '#000';
+            initialBtn.style.borderColor = getMeterColor(20);
+          }
+        });
       }, 200);
 
       mainContent.classList.add('blurred');
@@ -376,17 +393,13 @@
         buttons.forEach(b => b.classList.remove('active'));
         resetButtonColors();
         btn.classList.add('active');
-        // Always clamp score to 100 max
         let score = parseInt(btn.getAttribute('data-score'), 10);
         if (score > 100) score = 100;
 
-        // Animate from current meter value to new score
         let currentScore = parseInt(circlePercentText.textContent, 10);
         animateMeterTo(currentScore, score);
 
-        btn.style.background = getMeterColor(score);
-        btn.style.color = score >= 50 ? '#fff' : '#000';
-        btn.style.borderColor = getMeterColor(score);
+        // Button color will be set by updateCircleMeter
 
         // Hide all tooltips first
         document.querySelectorAll('.scoremeter-tooltip').forEach(tip => tip.style.display = 'none');
@@ -405,15 +418,12 @@
     const redirectBtn = document.getElementById('redirect-btn');
     redirectBtn.addEventListener('click', () => {
       resetButtonColors();
-      // Animate from current meter value to 100
       let currentScore = parseInt(circlePercentText.textContent, 10);
       animateMeterTo(currentScore, 100);
 
       buttons.forEach(b => b.classList.remove('active'));
       redirectBtn.classList.add('active');
-      redirectBtn.style.background = getMeterColor(100);
-      redirectBtn.style.color = '#fff';
-      redirectBtn.style.borderColor = getMeterColor(100);
+      // Button color will be set by updateCircleMeter
 
       // Hide all tooltips first
       document.querySelectorAll('.scoremeter-tooltip').forEach(tip => tip.style.display = 'none');
