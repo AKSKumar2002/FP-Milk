@@ -165,8 +165,8 @@
         .swipe-indicator {
             position: absolute;
             left: 50%;
-            top: 50%;
-            transform: translate(-50%, -50%);
+            top: 140px; /* Move a little below header */
+            transform: translate(-50%, 0);
             z-index: 20;
             display: flex;
             align-items: center;
@@ -241,10 +241,14 @@
 
     <main class="main">
         <div class="home-banners">
-            <!-- Swipe indicator (centered, only on first banner) -->
-            <div class="swipe-indicator" id="swipe-indicator">
+            <!-- Swipe indicators for both banners (now above image) -->
+            <div class="swipe-indicator" id="swipe-indicator-right">
                 <span class="tick">&#10003;</span>
                 Swipe Right
+            </div>
+            <div class="swipe-indicator" id="swipe-indicator-left" style="display:none;">
+                <span class="tick">&#10003;</span>
+                Swipe Left
             </div>
             <!--==================== HOME BANNER 1 ====================-->
             <section class="home home-banner active" id="home">
@@ -748,13 +752,19 @@
                     b.style.zIndex = (i === idx) ? 2 : 1;
                 });
                 banners[idx].classList.add('active');
-                // Show swipe indicator only on first banner
-                const swipeIndicator = document.getElementById('swipe-indicator');
-                if (swipeIndicator) swipeIndicator.style.display = idx === 0 ? 'flex' : 'none';
+                // Show swipe indicator for each banner
+                const swipeRight = document.getElementById('swipe-indicator-right');
+                const swipeLeft = document.getElementById('swipe-indicator-left');
+                if (swipeRight) swipeRight.style.display = idx === 0 ? 'flex' : 'none';
+                if (swipeLeft) swipeLeft.style.display = idx === 1 ? 'flex' : 'none';
             }
 
             function nextBanner() {
                 current = (current + 1) % banners.length;
+                showBanner(current);
+            }
+            function prevBanner() {
+                current = (current - 1 + banners.length) % banners.length;
                 showBanner(current);
             }
 
@@ -779,6 +789,10 @@
                     // Swipe right detected on first banner
                     clearInterval(autoTimer);
                     nextBanner();
+                } else if (startX - endX > threshold && current === 1) {
+                    // Swipe left detected on second banner
+                    clearInterval(autoTimer);
+                    prevBanner();
                 }
                 startX = null;
             }
@@ -791,4 +805,5 @@
         });
     </script>
 </body>
+</html>
 </html>
