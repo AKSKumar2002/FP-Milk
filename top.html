@@ -17,9 +17,6 @@
 
     <style>
         /* ...existing code... */
-        .home {
-            padding: 0.5rem 0 1rem; /* Move banner further up */
-        }
         .home-banners {
             position: relative;
             height: 100vh;
@@ -64,7 +61,7 @@
             max-width: 1100px;
             margin: 0 auto;
             gap: 3rem;
-            min-height: 45vh; /* Reduce min-height for less vertical space */
+            min-height: 70vh;
         }
         .home__data {
             flex: 1;
@@ -102,13 +99,14 @@
             max-width: 500px;
         }
         @media (max-width: 900px) {
-            .home {
-                padding: 0.3rem 0 0.7rem;
+            .home-banners {
+                height: 100svh;
+                min-height: 400px;
             }
             .home__container {
                 flex-direction: column;
                 gap: 1.5rem;
-                min-height: 35vh;
+                min-height: 60vh;
                 justify-content: center;
                 align-items: center;
             }
@@ -129,13 +127,14 @@
             }
         }
         @media (max-width: 600px) {
-            .home {
-                padding: 0.1rem 0 0.5rem;
+            .home-banners {
+                height: 100svh;
+                min-height: 400px;
             }
             .home__container {
                 padding: 1rem;
                 gap: 1rem;
-                min-height: 28vh;
+                min-height: 60vh;
                 justify-content: center;
                 align-items: center;
             }
@@ -161,8 +160,7 @@
                 margin-bottom: 1.2rem;
             }
             .home__data a.button {
-                margin-top: 0.3rem; /* Less space above button */
-                margin-bottom: 0.02rem; /* Less space below button */
+                margin-bottom: 0.8rem;
             }
         }
         .swipe-indicator {
@@ -945,7 +943,6 @@
                     }
                 };
 
-                // Submit and show response immediately
                 fetch('https://sheetdb.io/api/v1/089y1hftpjl6h', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -963,6 +960,47 @@
                     contactForm.querySelector('button[type="submit"]').disabled = false;
                 });
             });
+
+            // SheetsDB API submission handler for Contact Us section form
+            const contactSectionForm = document.querySelector('.contact__form');
+            if (contactSectionForm) {
+                contactSectionForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    const btn = contactSectionForm.querySelector('button[type="submit"]');
+                    if (btn) btn.disabled = true;
+
+                    // Get values from the form fields
+                    const mobile = contactSectionForm.querySelector('input[type="phone"]').value;
+                    const subject = contactSectionForm.querySelector('input[type="text"]').value;
+                    const message = contactSectionForm.querySelector('textarea[name="message"]').value;
+
+                    // Prepare data for GSheet (use Subject as Name, Message as Requirement)
+                    const data = {
+                        data: {
+                            Name: subject || "Contact Form",
+                            MobileNo: mobile,
+                            Address: "", // No address field in this form
+                            Requirement: message
+                        }
+                    };
+
+                    fetch('https://sheetdb.io/api/v1/089y1hftpjl6h', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(data)
+                    })
+                    .then(res => {
+                        if (btn) btn.disabled = false;
+                        contactSectionForm.reset();
+                        alert('Thank you! Your response has been submitted.');
+                        return res.ok ? res.json() : Promise.reject(res);
+                    })
+                    .catch(() => {
+                        if (btn) btn.disabled = false;
+                        alert('Submission failed. Please try again.');
+                    });
+                });
+            }
 
             // Product Popup JS
             const productButtons = document.querySelectorAll('.product__button');
