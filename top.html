@@ -195,6 +195,85 @@
             0% { transform: translateY(0); }
             100% { transform: translateY(-7px); }
         }
+        /* Contact Popup Styles */
+        .contact-popup-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.35);
+            z-index: 9999;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+        .contact-popup {
+            background: #fff;
+            border-radius: 1.2rem;
+            box-shadow: 0 8px 32px #0003;
+            padding: 2rem 2.2rem 1.5rem 2.2rem;
+            max-width: 370px;
+            width: 95vw;
+            position: relative;
+            color: #222;
+            animation: fadeIn .4s;
+        }
+        .contact-popup h2 {
+            margin-top: 0;
+            margin-bottom: 1.2rem;
+            font-size: 1.3rem;
+            color: #2e5532;
+            text-align: center;
+        }
+        .contact-popup form {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .contact-popup input, .contact-popup textarea {
+            padding: 0.7rem 1rem;
+            border-radius: 0.6rem;
+            border: 1px solid #cce3cc;
+            font-size: 1rem;
+            background: #f9fff9;
+            color: #222;
+        }
+        .contact-popup textarea {
+            min-height: 60px;
+            resize: vertical;
+        }
+        .contact-popup button[type="submit"] {
+            background: var(--first-color); /* Match Book a Free Trial button */
+            color: #fff;
+            border: none;
+            border-radius: 0.7rem;
+            padding: 0.8rem 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 0.5rem;
+            transition: background 0.2s;
+        }
+        .contact-popup button[type="submit"]:hover {
+            background: var(--first-color-alt); /* Match hover effect */
+        }
+        .contact-popup .close-btn {
+            position: absolute;
+            top: 12px;
+            right: 18px;
+            font-size: 1.3rem;
+            color: #888;
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+        .contact-popup-success {
+            color: #4caf50;
+            text-align: center;
+            margin-top: 1rem;
+            font-weight: 600;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.95);}
+            to { opacity: 1; transform: scale(1);}
+        }
     </style>
 </head>
 <body>
@@ -256,7 +335,7 @@
                             Straight from the source, in just hours 
                             Fresh to your doorstep in just 3 - 4 hrs
                         </p>
-                        <a href="#about" class="button button--flex">
+                        <a href="#about" class="button button--flex" id="book-trial-btn">
                             Book for a Free Trial <i class="ri-arrow-right-down-line button__icon"></i>
                         </a>
                     </div>
@@ -564,7 +643,7 @@
                             <h3 class="contact__subtitle">Call us for instant support</h3>
                             <span class="contact__description">
                                 <i class="ri-phone-line contact__icon"></i>
-                                +91 63841 26176
+                                +91 88259 35176
                             </span>
                         </div>
 
@@ -714,96 +793,87 @@
             // Remove banner nav buttons if present
             const nav = document.querySelector('.banner-nav');
             if (nav) nav.remove();
-        });
-    </script>
-</body>
-</html>
-</html>
-    </a>
 
-    <!--=============== SCROLL REVEAL ===============-->
-    <script src="assets/js/scrollreveal.min.js"></script>
-    
-    <!--=============== MAIN JS ===============-->
-    <script src="assets/js/main.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Flip text for first banner only
-            const flipTexts1 = ["Milk", "Purity", "Health"];
-            const flipSpan1 = document.querySelector('#home .flip-text');
-            let idx1 = 0;
-            setInterval(() => {
-                flipSpan1.classList.add('flip');
-                setTimeout(() => {
-                    idx1 = (idx1 + 1) % flipTexts1.length;
-                    flipSpan1.textContent = flipTexts1[idx1];
-                    flipSpan1.classList.remove('flip');
-                }, 300);
-            }, 3000);
+            // Contact Popup JS (merged with Book for a Free Trial button)
+            const bookTrialBtn = document.getElementById('book-trial-btn');
+            const contactOverlay = document.getElementById('contact-popup-overlay');
+            const contactClose = document.getElementById('contact-popup-close');
+            const contactForm = document.getElementById('contact-google-form');
+            const contactSuccess = document.getElementById('contact-popup-success');
 
-            // Auto-scroll banners every 5 seconds
-            const banners = document.querySelectorAll('.home-banner');
-            let current = 0;
-            let autoTimer;
-
-            function showBanner(idx) {
-                banners.forEach((b, i) => {
-                    b.classList.remove('active');
-                    b.style.zIndex = (i === idx) ? 2 : 1;
-                });
-                banners[idx].classList.add('active');
-                // Show swipe indicator for each banner
-                const swipeRight = document.getElementById('swipe-indicator-right');
-                const swipeLeft = document.getElementById('swipe-indicator-left');
-                if (swipeRight) swipeRight.style.display = idx === 0 ? 'flex' : 'none';
-                if (swipeLeft) swipeLeft.style.display = idx === 1 ? 'flex' : 'none';
-            }
-
-            function nextBanner() {
-                current = (current + 1) % banners.length;
-                showBanner(current);
-            }
-            function prevBanner() {
-                current = (current - 1 + banners.length) % banners.length;
-                showBanner(current);
-            }
-
-            showBanner(current);
-            autoTimer = setInterval(nextBanner, 5000);
-
-            // Remove banner nav buttons if present
-            const nav = document.querySelector('.banner-nav');
-            if (nav) nav.remove();
-
-            // Swipe detection for desktop and mobile
-            let startX = null;
-            let threshold = 60; // px
-
-            function onTouchStart(e) {
-                startX = e.touches ? e.touches[0].clientX : e.clientX;
-            }
-            function onTouchEnd(e) {
-                if (startX === null) return;
-                let endX = e.changedTouches ? e.changedTouches[0].clientX : e.clientX;
-                if (endX - startX > threshold && current === 0) {
-                    // Swipe right detected on first banner
-                    clearInterval(autoTimer);
-                    nextBanner();
-                } else if (startX - endX > threshold && current === 1) {
-                    // Swipe left detected on second banner
-                    clearInterval(autoTimer);
-                    prevBanner();
+            bookTrialBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                contactOverlay.style.display = 'flex';
+            });
+            contactClose.addEventListener('click', () => {
+                contactOverlay.style.display = 'none';
+                contactSuccess.style.display = 'none';
+                contactForm.reset();
+            });
+            contactOverlay.addEventListener('click', (e) => {
+                if (e.target === contactOverlay) {
+                    contactOverlay.style.display = 'none';
+                    contactSuccess.style.display = 'none';
+                    contactForm.reset();
                 }
-                startX = null;
-            }
+            });
 
-            const bannersContainer = document.querySelector('.home-banners');
-            bannersContainer.addEventListener('touchstart', onTouchStart, {passive:true});
-            bannersContainer.addEventListener('touchend', onTouchEnd, {passive:true});
-            bannersContainer.addEventListener('mousedown', onTouchStart);
-            bannersContainer.addEventListener('mouseup', onTouchEnd);
+            // SheetsDB API submission handler
+            contactForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                contactForm.querySelector('button[type="submit"]').disabled = true;
+                contactSuccess.style.display = 'none';
+
+                // Prepare data for SheetDB (must be {data: {...}})
+                const data = {
+                    data: {
+                        Name: contactForm.Name.value,
+                        MobileNo: contactForm.MobileNo.value,
+                        Address: contactForm.Address.value,
+                        Requirement: contactForm.Requirement.value
+                    }
+                };
+
+                fetch('https://sheetdb.io/api/v1/089y1hftpjl6h', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                })
+                .then(res => res.ok ? res.json() : Promise.reject(res))
+                .then(() => {
+                    contactSuccess.style.display = 'block';
+                    contactForm.querySelector('button[type="submit"]').disabled = false;
+                    contactForm.reset();
+                })
+                .catch(() => {
+                    contactSuccess.textContent = 'Submission failed. Please try again.';
+                    contactSuccess.style.display = 'block';
+                    contactForm.querySelector('button[type="submit"]').disabled = false;
+                });
+            });
         });
     </script>
+    <!-- Contact Popup Trigger Button -->
+    <!-- <button id="contact-popup-btn" style="position:fixed;bottom:32px;right:32px;z-index:999;background:#56ab2f;color:#fff;border:none;border-radius:2rem;padding:0.9rem 1.6rem;font-size:1.1rem;font-weight:600;box-shadow:0 2px 12px #0002;cursor:pointer;">
+        Contact Form
+    </button> -->
+    <!-- Contact Popup Overlay -->
+    <div class="contact-popup-overlay" id="contact-popup-overlay">
+        <div class="contact-popup">
+            <button class="close-btn" id="contact-popup-close" title="Close">&times;</button>
+            <h2>Your Response Form</h2>
+            <form id="contact-google-form">
+                <input type="text" name="Name" placeholder="Name" required>
+                <input type="tel" name="MobileNo" placeholder="Mobile No" required pattern="[0-9]{10,}">
+                <input type="text" name="Address" placeholder="Address" required>
+                <textarea name="Requirement" placeholder="Requirement of Milk" required></textarea>
+                <button type="submit">Submit</button>
+                <div class="contact-popup-success" id="contact-popup-success" style="display:none;">Thank you! Your response has been submitted.</div>
+            </form>
+        </div>
+    </div>
+    <iframe name="hidden_iframe" style="display:none;"></iframe>
 </body>
 </html>
+</html>https://docs.google.com/spreadsheets/d/1vULyHEon809pjUBw4KHkvDNmtJBWGNtAxTgvyh9cScc/edit?usp=sharing
 </html>
