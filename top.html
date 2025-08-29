@@ -209,9 +209,9 @@
             background: #fff;
             border-radius: 1.2rem;
             box-shadow: 0 8px 32px #0003;
-            padding: 2rem 1.2rem 1.5rem 1.2rem; /* reduced horizontal padding */
+            padding: 2rem 1.2rem 1.5rem 1.2rem; /* reduce horizontal padding */
             max-width: 370px;
-            width: 94vw;
+            width: 95vw;
             min-width: 0;
             position: relative;
             color: #222;
@@ -234,8 +234,6 @@
             flex-direction: column;
             gap: 1rem;
             width: 100%;
-            max-width: 340px;
-            margin: 0 auto;
             align-items: center;
         }
         .contact-popup input, .contact-popup textarea {
@@ -247,6 +245,7 @@
             color: #222;
             width: 100%;
             box-sizing: border-box;
+            max-width: 320px;
         }
         .contact-popup textarea {
             min-height: 60px;
@@ -263,7 +262,7 @@
             margin-top: 0.5rem;
             transition: background 0.2s;
             width: 100%;
-            box-sizing: border-box;
+            max-width: 320px;
         }
         .contact-popup button[type="submit"]:hover {
             background: var(--first-color-alt);
@@ -288,16 +287,6 @@
         @keyframes fadeIn {
             from { opacity: 0; transform: scale(0.95);}
             to { opacity: 1; transform: scale(1);}
-        }
-        @media (max-width: 600px) {
-            .contact-popup {
-                max-width: 98vw;
-                padding: 1.2rem 0.5rem 1rem 0.5rem;
-            }
-            .contact-popup form {
-                max-width: 98vw;
-                padding: 0;
-            }
         }
     </style>
 </head>
@@ -900,5 +889,5 @@
     <iframe name="hidden_iframe" style="display:none;"></iframe>
 </body>
 </html>
-</html>https://docs.google.com/spreadsheets/d/1vULyHEon809pjUBw4KHkvDNmtJBWGNtAxTgvyh9cScc/edit?usp=sharing
+</html>
 </html>
