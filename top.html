@@ -288,6 +288,112 @@
             from { opacity: 0; transform: scale(0.95);}
             to { opacity: 1; transform: scale(1);}
         }
+        /* Product Shop Now Button */
+        .product__button {
+            display: block;
+            font-size: 1rem;
+            padding: 0.6rem 1.4rem;
+            min-width: 90px;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            background: var(--first-color);
+            color: #fff;
+            transition: background 0.2s;
+            margin: 0.7rem auto 0 auto;
+            position: static;
+        }
+        .product__button:hover {
+            background: var(--first-color-alt);
+        }
+        /* Product Popup Styles */
+        .product-popup-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.35);
+            z-index: 9999;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+        .product-popup {
+            background: #fff;
+            border-radius: 1.2rem;
+            box-shadow: 0 8px 32px #0003;
+            padding: 2rem 1.2rem 1.5rem 1.2rem;
+            max-width: 370px;
+            width: 95vw;
+            min-width: 0;
+            position: relative;
+            color: #222;
+            animation: fadeIn .4s;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .product-popup img {
+            width: 180px;
+            margin-bottom: 1.2rem;
+            border-radius: 1rem;
+            box-shadow: 0 2px 12px #0001;
+        }
+        .product-popup h3 {
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+            color: var(--first-color);
+            text-align: center;
+        }
+        .product__title {
+            margin-bottom: 0.2rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            text-align: center;
+            width: 100%;
+            display: block;
+        }
+        .product-popup label {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: block;
+            color: #222;
+        }
+        .product-popup select {
+            width: 100%;
+            padding: 0.7rem 1rem;
+            border-radius: 0.6rem;
+            border: 1px solid #cce3cc;
+            font-size: 1rem;
+            background: #f9fff9;
+            color: #222;
+            margin-bottom: 1rem;
+        }
+        .product-popup .price-display {
+            font-size: 1.1rem;
+            color: var(--first-color);
+            font-weight: 700;
+            margin-bottom: 1rem;
+            text-align: center;
+            min-height: 1.2em;
+        }
+        .product-popup .close-btn {
+            position: absolute;
+            top: 12px;
+            right: 18px;
+            font-size: 1.3rem;
+            color: #888;
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+        @media (max-width: 600px) {
+            .product-popup {
+                max-width: 98vw;
+                padding: 1.2rem 0.5rem 1rem 0.5rem;
+            }
+            .product-popup img {
+                width: 120px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -453,50 +559,28 @@
             <h2 class="section__title-center">
                 Choose your milk <br> 
             </h2>
-
             <p class="product__description">
                 Here are some selected milk from our farm, all are in excellent 
                 quality and has a healthier span. Buy and enjoy at every sip.
             </p>
-
             <div class="product__container grid">
                 <article class="product__card">
                     <div class="product__circle"></div>
-
                     <img src="assets/img/Fresh Pure.png" alt="" class="product__img">
-
                     <h3 class="product__title">Farm Pure</h3>
-                    <span class="product__price">Launching Soon</span>
-
-                    <button class="button--flex product__button">
-                        <i class="ri-shopping-bag-line"></i>
-                    </button>
+                    <button class="product__button" data-product="Farm Pure" data-img="assets/img/Fresh Pure.png">Shop Now</button>
                 </article>
-
                 <article class="product__card">
                     <div class="product__circle"></div>
-
                     <img src="assets/img/Farm Cream.png" alt="" class="product__img">
-
                     <h3 class="product__title">Farm Cream</h3>
-                    <span class="product__price">Launching Soon</span>
-
-                    <button class="button--flex product__button">
-                        <i class="ri-shopping-bag-line"></i>
-                    </button>
+                    <button class="product__button" data-product="Farm Cream" data-img="assets/img/Farm Cream.png">Shop Now</button>
                 </article>
-
                 <article class="product__card">
                     <div class="product__circle"></div>
-
                     <img src="assets/img/Farm Lite.png" alt="" class="product__img">
-
                     <h3 class="product__title">Farm Lite</h3>
-                    <span class="product__price">Launching Soon</span>
-
-                    <button class="button--flex product__button">
-                        <i class="ri-shopping-bag-line"></i>
-                    </button>
+                    <button class="product__button" data-product="Farm Lite" data-img="assets/img/Farm Lite.png">Shop Now</button>
                 </article>
 <!-- 
                 <article class="product__card">
@@ -838,7 +922,6 @@
                 contactForm.querySelector('button[type="submit"]').disabled = true;
                 contactSuccess.style.display = 'none';
 
-                // Prepare data for SheetDB (must be {data: {...}})
                 const data = {
                     data: {
                         Name: contactForm.Name.value,
@@ -848,22 +931,76 @@
                     }
                 };
 
+                // Submit and show response immediately
                 fetch('https://sheetdb.io/api/v1/089y1hftpjl6h', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(data)
                 })
-                .then(res => res.ok ? res.json() : Promise.reject(res))
-                .then(() => {
+                .then(res => {
                     contactSuccess.style.display = 'block';
                     contactForm.querySelector('button[type="submit"]').disabled = false;
                     contactForm.reset();
+                    return res.ok ? res.json() : Promise.reject(res);
                 })
                 .catch(() => {
                     contactSuccess.textContent = 'Submission failed. Please try again.';
                     contactSuccess.style.display = 'block';
                     contactForm.querySelector('button[type="submit"]').disabled = false;
                 });
+            });
+
+            // Product Popup JS
+            const productButtons = document.querySelectorAll('.product__button');
+            const productOverlay = document.getElementById('product-popup-overlay');
+            const productPopup = document.getElementById('product-popup');
+            const productClose = document.getElementById('product-popup-close');
+            const productImg = document.getElementById('product-popup-img');
+            const productTitle = document.getElementById('product-popup-title');
+            const milkQty = document.getElementById('milk-qty');
+            const milkPrice = document.getElementById('milk-price');
+
+            // Example prices for each product and quantity
+            const priceTable = {
+                "Farm Pure": { "300": "₹20", "500": "₹30", "750": "₹45", "1000": "₹60" },
+                "Farm Cream": { "300": "₹25", "500": "₹43", "750": "₹57", "1000": "₹75" },
+                "Farm Lite": { "300": "₹28", "500": "₹42", "750": "₹64", "1000": "₹85" }
+            };
+
+            productButtons.forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const prod = btn.getAttribute('data-product');
+                    const img = btn.getAttribute('data-img');
+                    productImg.src = img;
+                    productTitle.textContent = prod;
+                    milkQty.value = "";
+                    milkPrice.textContent = "";
+                    productOverlay.style.display = 'flex';
+                });
+            });
+
+            productClose.addEventListener('click', () => {
+                productOverlay.style.display = 'none';
+                milkQty.value = "";
+                milkPrice.textContent = "";
+            });
+            productOverlay.addEventListener('click', (e) => {
+                if (e.target === productOverlay) {
+                    productOverlay.style.display = 'none';
+                    milkQty.value = "";
+                    milkPrice.textContent = "";
+                }
+            });
+
+            milkQty.addEventListener('change', function() {
+                const prod = productTitle.textContent;
+                const qty = milkQty.value;
+                if (qty && priceTable[prod] && priceTable[prod][qty]) {
+                    milkPrice.textContent = "Price: " + priceTable[prod][qty];
+                } else {
+                    milkPrice.textContent = "";
+                }
             });
         });
     </script>
@@ -884,6 +1021,22 @@
                 <button type="submit">Submit</button>
                 <div class="contact-popup-success" id="contact-popup-success" style="display:none;">Thank you! Your response has been submitted.</div>
             </form>
+        </div>
+    </div>
+    <div class="product-popup-overlay" id="product-popup-overlay">
+        <div class="product-popup" id="product-popup">
+            <button class="close-btn" id="product-popup-close" title="Close">&times;</button>
+            <img src="" alt="Product Image" id="product-popup-img">
+            <h3 id="product-popup-title"></h3>
+            <label for="milk-qty">Milk Quantity</label>
+            <select id="milk-qty">
+                <option value="">Select Quantity</option>
+                <option value="300">300 ml</option>
+                <option value="500">500 ml</option>
+                <option value="750">750 ml</option>
+                <option value="1000">1 Litre</option>
+            </select>
+            <div class="price-display" id="milk-price"></div>
         </div>
     </div>
     <iframe name="hidden_iframe" style="display:none;"></iframe>
