@@ -162,7 +162,38 @@
                 margin-bottom: 0.8rem;
             }
         }
-        /* ...existing code... */
+        .swipe-indicator {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 20;
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+            background: rgba(255,255,255,0.85);
+            padding: 0.7rem 1.4rem;
+            border-radius: 2rem;
+            font-size: 1.15rem;
+            font-weight: 600;
+            color: #2e5532;
+            box-shadow: 0 2px 12px #0001;
+            animation: swipeFlow 1.2s infinite alternate;
+            pointer-events: none;
+        }
+        .swipe-indicator .tick {
+            color: #4caf50;
+            font-size: 1.5rem;
+            animation: tickBounce 1.2s infinite alternate;
+        }
+        @keyframes swipeFlow {
+            0% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+            100% { transform: translate(-50%, -50%) scale(1.08); opacity: 0.85; }
+        }
+        @keyframes tickBounce {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-7px); }
+        }
     </style>
 </head>
 <body>
@@ -210,6 +241,11 @@
 
     <main class="main">
         <div class="home-banners">
+            <!-- Swipe indicator (centered, only on first banner) -->
+            <div class="swipe-indicator" id="swipe-indicator">
+                <span class="tick">&#10003;</span>
+                Swipe Right
+            </div>
             <!--==================== HOME BANNER 1 ====================-->
             <section class="home home-banner active" id="home">
                 <div class="home__container container grid">
@@ -635,7 +671,7 @@
                 <ul class="footer__data">
                     <li class="footer__information">Farmpick - Malumichampatty</li>
                     <li class="footer__information">Coimbatore - 641032</li>
-                    <li class="footer__information">+91 63841 26176</li>
+                    <li class="footer__information">+91 88259 35176</li>
                 </ul>
             </div>
 
@@ -701,26 +737,57 @@
                 }, 300);
             }, 3000);
 
-            // Banner manual navigation logic
+            // Auto-scroll banners every 5 seconds
             const banners = document.querySelectorAll('.home-banner');
-            const dots = document.querySelectorAll('.banner-dot');
             let current = 0;
+            let autoTimer;
+
             function showBanner(idx) {
                 banners.forEach((b, i) => {
                     b.classList.remove('active');
                     b.style.zIndex = (i === idx) ? 2 : 1;
                 });
                 banners[idx].classList.add('active');
-                dots.forEach((d, i) => d.style.background = i === idx ? '#333' : '#eee');
-                current = idx;
+                // Show swipe indicator only on first banner
+                const swipeIndicator = document.getElementById('swipe-indicator');
+                if (swipeIndicator) swipeIndicator.style.display = idx === 0 ? 'flex' : 'none';
             }
+
+            function nextBanner() {
+                current = (current + 1) % banners.length;
+                showBanner(current);
+            }
+
             showBanner(current);
-            dots.forEach(dot => {
-                dot.addEventListener('click', function() {
-                    const idx = parseInt(this.dataset.banner, 10);
-                    showBanner(idx);
-                });
-            });
+            autoTimer = setInterval(nextBanner, 5000);
+
+            // Remove banner nav buttons if present
+            const nav = document.querySelector('.banner-nav');
+            if (nav) nav.remove();
+
+            // Swipe detection for desktop and mobile
+            let startX = null;
+            let threshold = 60; // px
+
+            function onTouchStart(e) {
+                startX = e.touches ? e.touches[0].clientX : e.clientX;
+            }
+            function onTouchEnd(e) {
+                if (startX === null) return;
+                let endX = e.changedTouches ? e.changedTouches[0].clientX : e.clientX;
+                if (endX - startX > threshold && current === 0) {
+                    // Swipe right detected on first banner
+                    clearInterval(autoTimer);
+                    nextBanner();
+                }
+                startX = null;
+            }
+
+            const bannersContainer = document.querySelector('.home-banners');
+            bannersContainer.addEventListener('touchstart', onTouchStart, {passive:true});
+            bannersContainer.addEventListener('touchend', onTouchEnd, {passive:true});
+            bannersContainer.addEventListener('mousedown', onTouchStart);
+            bannersContainer.addEventListener('mouseup', onTouchEnd);
         });
     </script>
 </body>
