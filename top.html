@@ -209,12 +209,17 @@
             background: #fff;
             border-radius: 1.2rem;
             box-shadow: 0 8px 32px #0003;
-            padding: 2rem 2.2rem 1.5rem 2.2rem;
+            padding: 2rem 1.2rem 1.5rem 1.2rem; /* reduced horizontal padding */
             max-width: 370px;
-            width: 95vw;
+            width: 94vw;
+            min-width: 0;
             position: relative;
             color: #222;
             animation: fadeIn .4s;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
         .contact-popup h2 {
             margin-top: 0;
@@ -222,11 +227,16 @@
             font-size: 1.3rem;
             color: #2e5532;
             text-align: center;
+            width: 100%;
         }
         .contact-popup form {
             display: flex;
             flex-direction: column;
             gap: 1rem;
+            width: 100%;
+            max-width: 340px;
+            margin: 0 auto;
+            align-items: center;
         }
         .contact-popup input, .contact-popup textarea {
             padding: 0.7rem 1rem;
@@ -235,13 +245,15 @@
             font-size: 1rem;
             background: #f9fff9;
             color: #222;
+            width: 100%;
+            box-sizing: border-box;
         }
         .contact-popup textarea {
             min-height: 60px;
             resize: vertical;
         }
         .contact-popup button[type="submit"] {
-            background: var(--first-color); /* Match Book a Free Trial button */
+            background: var(--first-color);
             color: #fff;
             border: none;
             border-radius: 0.7rem;
@@ -250,9 +262,11 @@
             cursor: pointer;
             margin-top: 0.5rem;
             transition: background 0.2s;
+            width: 100%;
+            box-sizing: border-box;
         }
         .contact-popup button[type="submit"]:hover {
-            background: var(--first-color-alt); /* Match hover effect */
+            background: var(--first-color-alt);
         }
         .contact-popup .close-btn {
             position: absolute;
@@ -269,10 +283,21 @@
             text-align: center;
             margin-top: 1rem;
             font-weight: 600;
+            width: 100%;
         }
         @keyframes fadeIn {
             from { opacity: 0; transform: scale(0.95);}
             to { opacity: 1; transform: scale(1);}
+        }
+        @media (max-width: 600px) {
+            .contact-popup {
+                max-width: 98vw;
+                padding: 1.2rem 0.5rem 1rem 0.5rem;
+            }
+            .contact-popup form {
+                max-width: 98vw;
+                padding: 0;
+            }
         }
     </style>
 </head>
