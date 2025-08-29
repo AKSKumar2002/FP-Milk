@@ -431,10 +431,10 @@
       const tooltip = redirectBtn.querySelector('.scoremeter-tooltip');
       if (tooltip) {
         tooltip.style.display = 'block';
-        setTimeout(() => {
-          tooltip.style.display = 'none';
-          window.location.href = "top.html";
-        }, 10000);
+        // Redirect immediately after click (no delay)
+        window.location.href = "top.html";
+      } else {
+        window.location.href = "top.html";
       }
     });
   </script>
