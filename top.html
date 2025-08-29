@@ -74,7 +74,8 @@
             flex: 1;
             display: block;
             margin: 0 auto;
-            max-width: 320px;
+            max-width: 520px; /* Increased for desktop */
+            width: 100%;      /* Allow to fill container width */
             height: auto;
         }
         /* Banner 2 uses same alignment as banner 1 */
@@ -110,7 +111,7 @@
                 align-items: center;
             }
             .home__img {
-                max-width: 220px;
+                max-width: 340px; /* Increased for tablet */
                 margin-bottom: 1.2rem;
             }
             .home__data {
@@ -138,7 +139,7 @@
                 align-items: center;
             }
             .home__img {
-                max-width: 140px;
+                max-width: 220px; /* Increased for mobile */
                 margin-bottom: 1rem;
             }
             .home__data {
@@ -241,23 +242,15 @@
 
     <main class="main">
         <div class="home-banners">
-            <!-- Swipe indicators for both banners (now above image) -->
-            <div class="swipe-indicator" id="swipe-indicator-right">
-                <span class="tick">&#10003;</span>
-                Swipe Right
-            </div>
-            <div class="swipe-indicator" id="swipe-indicator-left" style="display:none;">
-                <span class="tick">&#10003;</span>
-                Swipe Left
-            </div>
+            <!-- Remove swipe indicators -->
             <!--==================== HOME BANNER 1 ====================-->
             <section class="home home-banner active" id="home">
                 <div class="home__container container grid">
-                    <img src="assets/milk_bottle.png" alt="" class="home__img">
+                    <img src="assets/img/Milk Banner1.png" alt="" class="home__img">
                     <div class="home__data">
                         <h1 class="home__title">
-                            Morning <br>
-                            <span class="flip-text">Milk</span> Poured daily
+                            CIBIL score builds your <span class="flip-text-wealth">Wealth</span>,<br>
+                            MILK score builds your <span class="flip-text-health">Health</span>
                         </h1>
                         <p class="home__description">
                             Straight from the source, in just hours 
@@ -283,44 +276,9 @@
                     </div>
                 </div>
             </section>
-            <!--==================== HOME BANNER 2 ====================-->
-            <section class="home home--alt home-banner" id="home2">
-                <div class="home__container container grid">
-                    <img src="assets/img/Cow.png" alt="" class="home__img">
-                    <div class="home__data">
-                        <h1 class="home__title">
-                            As CIBIL opens financial doors,<br>
-                            Milk Score opens the door to health
-                        </h1>
-                        <div class="home__subtitle">
-                            FarmPick milk makes that possible.
-                        </div>
-                        <a href="#products" class="button button--flex">
-                            Book a Free trial <i class="ri-arrow-right-down-line button__icon"></i>
-                        </a>
-                    </div>
-                    <div class="home__social">
-                        <span class="home__social-follow">Follow Us</span>
-                        <div class="home__social-links">
-                            <a href="https://www.facebook.com/" target="_blank" class="home__social-link">
-                                <i class="ri-facebook-fill"></i>
-                            </a>
-                            <a href="https://www.instagram.com/farm_pick_/#" target="_blank" class="home__social-link">
-                                <i class="ri-instagram-line"></i>
-                            </a>
-                            <a href="https://x.com/Dharanidha52756" target="_blank" class="home__social-link">
-                                <i class="ri-twitter-fill"></i>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </section>
+            <!-- Remove HOME BANNER 2 -->
         </div>
-        <!-- Banner navigation buttons -->
-        <div class="banner-nav" style="position:absolute;bottom:32px;left:50%;transform:translateX(-50%);display:flex;gap:18px;z-index:10;">
-            <button class="banner-dot" data-banner="0" style="width:22px;height:22px;border-radius:50%;border:none;background:#eee;box-shadow:0 2px 8px #0002;cursor:pointer;outline:none;"></button>
-            <button class="banner-dot" data-banner="1" style="width:22px;height:22px;border-radius:50%;border:none;background:#eee;box-shadow:0 2px 8px #0002;cursor:pointer;outline:none;"></button>
-        </div>
+        <!-- Remove banner navigation buttons -->
 
         <!--==================== ABOUT ====================-->
         <section class="about section container" id="about">
@@ -673,17 +631,17 @@
                 <h3 class="footer__title">Our Address</h3>
 
                 <ul class="footer__data">
-                    <li class="footer__information">Farmpick - Malumichampatty</li>
-                    <li class="footer__information">Coimbatore - 641032</li>
-                    <li class="footer__information">+91 88259 35176</li>
+                    <li class="footer__information">Farmpick - Malumichampatti</li>
+                    <li class="footer__information">Murugan Nagar, 2/208B, Cross Cut, Guruvayur Nagar</li>
+                    <li class="footer__information">Coimbatore - 641021</li>
                 </ul>
             </div>
 
             <div class="footer__content">
-                <h3 class="footer__title">Contact Us</h3>
+                <h3 class="footer__title">Contact Us @</h3>
 
                 <ul class="footer__data">
-                    <li class="footer__information">+91 63841 26176</li>
+                    <li class="footer__information">+91 88259 35176</li>
                     
                     <div class="footer__social">
                         <a href="https://www.facebook.com/" class="footer__social-link">
@@ -719,6 +677,48 @@
     <!--=============== SCROLL UP ===============-->
     <a href="#" class="scrollup" id="scroll-up"> 
         <i class="ri-arrow-up-fill scrollup__icon"></i>
+    </a>
+
+    <!--=============== SCROLL REVEAL ===============-->
+    <script src="assets/js/scrollreveal.min.js"></script>
+    
+    <!--=============== MAIN JS ===============-->
+    <script src="assets/js/main.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Flip text for Wealth and Health in banner 1
+            const wealthWords = ["Wealth", "Loan", "Credit"];
+            const healthWords = ["Health", "Bone", "Calcium"];
+            const flipWealth = document.querySelector('.flip-text-wealth');
+            const flipHealth = document.querySelector('.flip-text-health');
+            let idxWealth = 0, idxHealth = 0;
+
+            setInterval(() => {
+                flipWealth.classList.add('flip');
+                setTimeout(() => {
+                    idxWealth = (idxWealth + 1) % wealthWords.length;
+                    flipWealth.textContent = wealthWords[idxWealth];
+                    flipWealth.classList.remove('flip');
+                }, 300);
+            }, 3000);
+
+            setInterval(() => {
+                flipHealth.classList.add('flip');
+                setTimeout(() => {
+                    idxHealth = (idxHealth + 1) % healthWords.length;
+                    flipHealth.textContent = healthWords[idxHealth];
+                    flipHealth.classList.remove('flip');
+                }, 300);
+            }, 3000);
+
+            // Remove banner nav buttons if present
+            const nav = document.querySelector('.banner-nav');
+            if (nav) nav.remove();
+        });
+    </script>
+</body>
+</html>
+</html>
     </a>
 
     <!--=============== SCROLL REVEAL ===============-->
