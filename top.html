@@ -403,6 +403,35 @@
                 width: 120px;
             }
         }
+        @keyframes spin {
+            0% { transform: rotate(0deg);}
+            100% { transform: rotate(360deg);}
+        }
+        .loader {
+            display: inline-block;
+            width: 48px;
+            height: 48px;
+            border: 6px solid #e0e0e0;
+            border-top: 6px solid #56ab2f;
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+            background: transparent;
+            box-shadow: 0 0 8px #56ab2f55;
+        }
+        #contact-loading-overlay {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(255,255,255,0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            /* Remove blur from loader overlay itself */
+        }
+        .contact-popup.loading form > *:not(#contact-loading-overlay) {
+            filter: blur(3px);
+            pointer-events: none;
+        }
     </style>
 </head>
 <body>
@@ -910,6 +939,9 @@
             const contactClose = document.getElementById('contact-popup-close');
             const contactForm = document.getElementById('contact-google-form');
             const contactSuccess = document.getElementById('contact-popup-success');
+            const contactSubmitBtn = document.getElementById('contact-submit-btn');
+            const contactLoadingOverlay = document.getElementById('contact-loading-overlay');
+            const contactPopup = document.querySelector('.contact-popup');
 
             bookTrialBtn.addEventListener('click', function(e) {
                 e.preventDefault();
@@ -931,7 +963,9 @@
             // SheetsDB API submission handler
             contactForm.addEventListener('submit', function(e) {
                 e.preventDefault();
-                contactForm.querySelector('button[type="submit"]').disabled = true;
+                contactSubmitBtn.disabled = true;
+                contactLoadingOverlay.style.display = 'flex';
+                if (contactPopup) contactPopup.classList.add('loading');
                 contactSuccess.style.display = 'none';
 
                 const data = {
@@ -949,15 +983,19 @@
                     body: JSON.stringify(data)
                 })
                 .then(res => {
-                    contactSuccess.style.display = 'block';
-                    contactForm.querySelector('button[type="submit"]').disabled = false;
+                    contactLoadingOverlay.style.display = 'none';
+                    contactSubmitBtn.disabled = false;
+                    if (contactPopup) contactPopup.classList.remove('loading');
                     contactForm.reset();
+                    contactSuccess.style.display = 'block';
                     return res.ok ? res.json() : Promise.reject(res);
                 })
                 .catch(() => {
+                    contactLoadingOverlay.style.display = 'none';
+                    contactSubmitBtn.disabled = false;
+                    if (contactPopup) contactPopup.classList.remove('loading');
                     contactSuccess.textContent = 'Submission failed. Please try again.';
                     contactSuccess.style.display = 'block';
-                    contactForm.querySelector('button[type="submit"]').disabled = false;
                 });
             });
 
@@ -1011,6 +1049,7 @@
             const productTitle = document.getElementById('product-popup-title');
             const milkQty = document.getElementById('milk-qty');
             const milkPrice = document.getElementById('milk-price');
+            const buyNowBtn = document.getElementById('buy-now-btn');
 
             // Example prices for each product and quantity
             const priceTable = {
@@ -1019,6 +1058,7 @@
                 "Farm Lite": { "300": "₹28", "500": "₹42", "750": "₹64", "1000": "₹85" }
             };
 
+            // Show product popup on Shop Now
             productButtons.forEach(btn => {
                 btn.addEventListener('click', function(e) {
                     e.preventDefault();
@@ -1028,30 +1068,49 @@
                     productTitle.textContent = prod;
                     milkQty.value = "";
                     milkPrice.textContent = "";
+                    buyNowBtn.style.display = 'none';
                     productOverlay.style.display = 'flex';
                 });
             });
 
+            // Close product popup
             productClose.addEventListener('click', () => {
                 productOverlay.style.display = 'none';
                 milkQty.value = "";
                 milkPrice.textContent = "";
+                buyNowBtn.style.display = 'none';
             });
             productOverlay.addEventListener('click', (e) => {
                 if (e.target === productOverlay) {
                     productOverlay.style.display = 'none';
                     milkQty.value = "";
                     milkPrice.textContent = "";
+                    buyNowBtn.style.display = 'none';
                 }
             });
 
+            // Show Buy Now button after quantity selected
             milkQty.addEventListener('change', function() {
                 const prod = productTitle.textContent;
                 const qty = milkQty.value;
                 if (qty && priceTable[prod] && priceTable[prod][qty]) {
                     milkPrice.textContent = "Price: " + priceTable[prod][qty];
+                    buyNowBtn.style.display = 'block';
                 } else {
                     milkPrice.textContent = "";
+                    buyNowBtn.style.display = 'none';
+                }
+            });
+
+            // Buy Now button opens contact form and pre-fills Requirement
+            buyNowBtn.addEventListener('click', function() {
+                productOverlay.style.display = 'none';
+                const contactOverlay = document.getElementById('contact-popup-overlay');
+                contactOverlay.style.display = 'flex';
+                const contactForm = document.getElementById('contact-google-form');
+                if (contactForm) {
+                    contactForm.Requirement.value =
+                        'Buy Now: ' + productTitle.textContent + ' - ' + milkQty.options[milkQty.selectedIndex].text;
                 }
             });
         });
@@ -1065,13 +1124,19 @@
         <div class="contact-popup">
             <button class="close-btn" id="contact-popup-close" title="Close">&times;</button>
             <h2>Your Response Form</h2>
-            <form id="contact-google-form">
+            <form id="contact-google-form" style="position:relative;">
                 <input type="text" name="Name" placeholder="Name" required>
                 <input type="tel" name="MobileNo" placeholder="Mobile No" required pattern="[0-9]{10,}">
                 <input type="text" name="Address" placeholder="Address" required>
                 <textarea name="Requirement" placeholder="Requirement of Milk" required></textarea>
-                <button type="submit">Submit</button>
+                <button type="submit" id="contact-submit-btn">
+                    Submit
+                </button>
                 <div class="contact-popup-success" id="contact-popup-success" style="display:none;">Thank you! Your response has been submitted.</div>
+                <!-- Loader Overlay -->
+                <div id="contact-loading-overlay" style="display:none;">
+                    <span class="loader"></span>
+                </div>
             </form>
         </div>
     </div>
@@ -1089,6 +1154,10 @@
                 <option value="1000">1 Litre</option>
             </select>
             <div class="price-display" id="milk-price"></div>
+            <!-- Add Buy Now Button below price display -->
+            <button id="buy-now-btn" style="display:none; background:var(--first-color);color:#fff;border:none;border-radius:0.7rem;padding:0.8rem 1.2rem;font-weight:bold;cursor:pointer;width:100%;max-width:320px;margin-top:0.5rem;">
+                Buy Now
+            </button>
         </div>
     </div>
     <iframe name="hidden_iframe" style="display:none;"></iframe>
